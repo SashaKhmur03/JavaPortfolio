@@ -1,0 +1,13 @@
+services:
+  adminer:
+    image: adminer:latest
+    environment:
+      - ADMINER_DEFAULT_SERVER=postgresql
+    ports:
+      - 90:8090
+    networks:
+      - network
+
+networks:
+  network:
+    external: true

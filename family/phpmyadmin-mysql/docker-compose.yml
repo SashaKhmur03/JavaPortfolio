@@ -1,0 +1,17 @@
+services:
+  phpmyadmin-mysql:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      PMA_USER: appuser
+      PMA_PASSWORD: apppassword
+    networks:
+      - network
+networks:
+  network:
+    external: true

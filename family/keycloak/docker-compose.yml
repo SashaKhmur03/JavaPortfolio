@@ -1,0 +1,32 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    command: ["start","--transaction-xa-enabled=false"]
+    ports:
+      - 8092:8080
+      - 9443:8443
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: keycloakdb
+      DB_SCHEMA: public
+      DB_USER: keycloakuser
+      DB_PASSWORD: keycloakpass
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: 123
+      KEYCLOAK_HTTP_PORT: 8080
+      KEYCLOAK_HTTPS_ENABLED: "false"
+      KEYCLOAK_PROXY_MODE: edge
+      KC_HOSTNAME: https://194.158.216.38:9443/
+      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/server.crt
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/server.key
+    volumes:
+      - ./extensions:/opt/keycloak/providers
+      - ./server.crt/:/opt/keycloak/conf/server.crt
+      - ./server.key/:/opt/keycloak/conf/server.key
+    networks:
+      - network
+networks:
+  network:
+    external: true
+

@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openldap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openldap
+  template:
+    metadata:
+      labels:
+        app: openldap
+    spec:
+      containers:
+      - name: openldap
+        image: osixia/openldap:latest
+        ports:
+        - containerPort: 389
+        - containerPort: 636
+        volumeMounts:
+        - mountPath: /container/service/slapd/assets/certs
+          name: certificates-volume
+        - mountPath: /var/lib/ldap
+          name: database-volume
+        - mountPath: /etc/ldap/slapd.d
+          name: config-volume
+        env:
+        - name: LDAP_ORGANISATION
+          value: ramhlocal
+        - name: LDAP_DOMAIN
+          value: ramhlocal.com
+        - name: LDAP_ADMIN_USERNAME
+          value: admin
+        - name: LDAP_ADMIN_PASSWORD
+          value: admin_pass
+        - name: LDAP_CONFIG_PASSWORD
+          value: config_pass
+        - name: LDAP_BASE_DN
+          value: dc=ramhlocal,dc=com
+        - name: LDAP_TLS_CRT_FILENAME
+          value: server.crt
+        - name: LDAP_TLS_KEY_FILENAME
+          value: server.key
+        - name: LDAP_TLS_CA_CRT_FILENAME
+          value: ramhlocal.com.ca.crt
+        - name: LDAP_READONLY_USER
+          value: "true"
+        - name: LDAP_READONLY_USER_USERNAME
+          value: user-ro
+        - name: LDAP_READONLY_USER_PASSWORD
+          value: ro_pass
+      volumes:
+      - name: certificates-volume
+        hostPath:
+          path: /path/to/local/data/certificates
+      - name: database-volume
+        hostPath:
+          path: /path/to/local/data/slapd/database
+      - name: config-volume
+        hostPath:
+          path: /path/to/local/data/slapd/config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openldap-service
+spec:
+  type: NodePort
+  selector:
+    app: openldap
+  ports:
+  - name: ldap-port
+    protocol: TCP
+    port: 389
+    targetPort: 389
+    nodePort: 30089
+  - name: ldaps-port
+    protocol: TCP
+    port: 636
+    targetPort: 636
+    nodePort: 30636

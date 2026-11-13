@@ -1,0 +1,11 @@
+services:
+  artemis-mq:
+    image: apache/activemq-artemis:latest-alpine
+    ports:
+      - 8161:8161
+    networks:
+      - network
+
+networks:
+  network:
+    external: true

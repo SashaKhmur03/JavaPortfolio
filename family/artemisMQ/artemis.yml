@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: artemis-mq-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: artemis-mq
+  template:
+    metadata:
+      labels:
+        app: artemis-mq
+    spec:
+      containers:
+        - name: artemis-mq
+          image: apache/activemq-artemis:latest-alpine # Или укажите нужную версию образа
+          ports:
+            - containerPort: 61616 # Порт JMS
+            - containerPort: 8161 # Веб-консоль
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: artemis-mq-service
+spec:
+  type: NodePort
+  selector:
+    app: artemis-mq
+  ports:
+    - name: jms-port
+      port: 61616
+      targetPort: 61616
+      nodePort: 30000
+    - name: web-console
+      port: 8161
+      targetPort: 8161
+      nodePort: 31000

@@ -1,0 +1,28 @@
+services:
+  openldap:
+    image: osixia/openldap:latest
+    ports:
+      - 389:389
+      - 636:636
+    volumes:
+      - "/path/to/local/data/certificates:/container/service/slapd/assets/certs"
+      - "/path/to/local/data/slapd/database:/var/lib/ldap"
+      - "/path/to/local/data/slapd/config:/etc/ldap/slapd.d"
+    environment:
+      - LDAP_ORGANISATION=ramhlocal
+      - LDAP_DOMAIN=ramhlocal.com
+      - LDAP_ADMIN_USERNAME=admin
+      - LDAP_ADMIN_PASSWORD=admin_pass
+      - LDAP_CONFIG_PASSWORD=config_pass
+      - LDAP_BASE_DN=dc=ramhlocal,dc=com
+      - LDAP_TLS_CRT_FILENAME=server.crt
+      - LDAP_TLS_KEY_FILENAME=server.key
+      - LDAP_TLS_CA_CRT_FILENAME=ramhlocal.com.ca.crt
+      - LDAP_READONLY_USER=true
+      - LDAP_READONLY_USER_USERNAME=user-ro
+      - LDAP_READONLY_USER_PASSWORD=ro_pass
+    networks:
+      - network
+networks:
+  network:
+    external: true

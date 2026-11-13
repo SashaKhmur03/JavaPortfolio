@@ -1,0 +1,19 @@
+services:
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: family
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword
+    ports:
+      - 3306:3306
+    networks:
+      - network
+
+volumes:
+  mysql_data:
+
+networks:
+  network:
+    external: true
